@@ -1,55 +1,72 @@
 // Aluno: João Victor Bernardes Gracês
-// Vídeo de base: https://www.youtube.com/watch?v=5eJxpkZGoYE
-// Data: 02/06/23
-
+// Feito com auxilio de videos no youtube, chatgpt e ajuda de colegas
 
 #include <stdio.h>
+#include <stdlib.h>
 
-void combSort(int [], int);
-void printArray (int [], int);
 
-int main() {
-    int array[] = {7, 2, 9, 1, 5, 6, 6, 2, 1, 6, 7, 4, 12, 144, 6, 7 ,89, 34, 88, 55};
-    int n = sizeof(array) / sizeof(array[0]);
 
-    printf("Array antes da ordenação: ");
-    printArray(array, n);
 
-    combSort(array, n);
+// Definição da estrutura do nó da lista
+typedef struct Node {
+    int data;               // Dado armazenado no nó
+    struct Node* next;      // Ponteiro para o próximo nó
+} Node;
 
-    printf("Array após a ordenação combo: ");
-    printArray(array, n);
-
-    return 0;
+// Função para criar um novo nó na lista
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));  // Utilização do malloc para alocar memória para o novo nó
+    if (newNode == NULL) {                         // Verifica se a alocação foi bem-sucedida
+        printf("Erro ao alocar memória!\n");
+        exit(1);
+    }
+    newNode->data = data;                          // Define o dado do novo nó
+    newNode->next = NULL;                          
+    return newNode;
 }
 
+// Função para inserir um novo nó no início da lista
+void insertAtBeginning(Node** head, int data) {
+    Node* newNode = createNode(data);               
+    newNode->next = *head;                          // O próximo nó do novo nó aponta para a antiga cabeça da lista
+    *head = newNode;                                // A cabeça da lista agora aponta para o novo nó
+    printf("Novo nó inserido no início: %d\n", data);
+}
 
-
-void printArray(int array[], int size) {
-    for (int i = 0; i < size; i++)
-        printf("%d ", array[i]);
+// Função para exibir a lista
+void displayList(Node* head) {
+    Node* current = head;                            // Ponteiro auxiliar para percorrer a lista
+    printf("Lista: ");
+    while (current != NULL) {                        // Percorre a lista até o final
+        printf("%d ", current->data);                // Exibe o dado do nó atual
+        current = current->next;                      // Avança para o próximo nó
+    }
     printf("\n");
 }
 
-void combSort(int array[], int n) {
-    int gap = n;
-    int swapped = 1;
-
-    while (gap > 1 || swapped) {
-        gap = (gap * 10) / 13;
-        if (gap < 1)
-            gap = 1;
-
-        swapped = 0;
-
-        for (int i = 0; i < n - gap; i++) {
-            if (array[i] > array[i + gap]) {
-                int temp = array[i];
-                array[i] = array[i + gap];
-                array[i + gap] = temp;
-                swapped = 1;
-            }
-        }
+// Função para liberar a memória alocada pela lista
+void freeList(Node* head) {
+    Node* current = head;                            // Ponteiro auxiliar para percorrer a lista
+    while (current != NULL) {                        // Percorre a lista até o final
+        Node* temp = current;                         // Armazena o nó atual temporariamente
+        current = current->next;                       // Avança para o próximo nó
+        free(temp);                                   
     }
 }
 
+int main() {
+    Node* head = NULL;                                
+
+    // Inserindo nós na lista usando a função insertAtBeginning
+    insertAtBeginning(&head, 3);
+    insertAtBeginning(&head, 7);
+    insertAtBeginning(&head, 9);
+
+    // Exibindo a lista usando a função displayList
+    displayList(head);
+
+    // Liberando a memória alocada pela lista usando a função freeList
+    freeList(head);
+
+    return 0;
+}
